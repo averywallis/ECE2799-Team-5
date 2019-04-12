@@ -1,4 +1,14 @@
-#include <Wire.h>
+/*
+ * Testing the feasibility/usability of the LCD.
+ * 
+ * 
+ * Pin connections (Arduino Uno/Nano):
+ * SDA - A4
+ * SCL - A5
+ * VCC - 3V-5V
+ * GND - GND
+ */
+
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
