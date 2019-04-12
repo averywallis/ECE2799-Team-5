@@ -16,12 +16,18 @@
  * GND - GND
  */
 
+//libraries
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+//micros
 #define OLED_RESET 4
+
+//create instance of ssd1306 object, passing the reset pin
 Adafruit_SSD1306 display(OLED_RESET);
 
+
+//bitmaps of images
 // '', 128x64px
 const unsigned char myBitmap [] PROGMEM = {
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
@@ -226,37 +232,40 @@ const unsigned char myBitmap4 [] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-
+//setup code, runs once on boot
 void setup()
 {
-  pinMode(13, OUTPUT);
-  delay(1000);
   
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  pinMode(13, OUTPUT); //set pin 13 to output
+  delay(1000); //wait a second
+  
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //setup the display, with proper power management and proper I2C address
 
-  display.display();
-  delay(2000);
-  display.clearDisplay();
+  display.display(); //flush the screen (update)
+  delay(2000); //wait a second
+  display.clearDisplay(); //clear the display (doesn't force an update, just clears the buffer)
 }
-void loop()
-{
-  digitalWrite(13, HIGH);
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println("Hello, world!");
 
-  display.setCursor(0,16);
-  display.println("ECE2799");
-  display.setCursor(0,32);
-  display.println("This could work");
-  display.display();
-  delay(1000);
+void loop(){ //think of this as the main function, but is called repeatedly by the IDE
+  digitalWrite(13, HIGH); //turn LED on
+  display.setTextSize(2); //set the text size of what you display to the display
+  display.setTextColor(WHITE); //set color to white (pixel on in our case)
+  display.setCursor(0,0); //set starting cursor in top left corner
+  display.print("Hello, world!"); //print text
 
-  display.clearDisplay();
-  display.drawBitmap(0, 0,  myBitmap, 128, 64, 1);
-  display.display();
-  delay(1000);
+  display.setCursor(0,16); //change cursor location (down by 16 pixels)
+  display.println("ECE2799"); //more text
+  display.setCursor(0,32); //move test down
+  display.print("This could work"); //more text
+  display.display(); //update display
+  delay(1000); //wait a second
+
+
+  //do a series of bitmaps
+  display.clearDisplay(); //clear the buffer
+  display.drawBitmap(0, 0,  myBitmap, 128, 64, 1); //draw bitmap
+  display.display(); //update display
+  delay(1000); //wait a second
 
   display.clearDisplay();
   display.drawBitmap(0, 0,  myBitmap2, 128, 64, 1);
