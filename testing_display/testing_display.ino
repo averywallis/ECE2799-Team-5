@@ -1,5 +1,12 @@
 /*
  * Testing the feasibility/usability of the LCD.
+ * Will display a couple images using bitmaps.
+ * If you want to toy around with bitmaps,
+ * following link is a great tool to convert images to bitmap usable by Arduino:
+ * https://javl.github.io/image2cpp/
+ * 
+ * May need to install libraries, do this by going to 'Sketch'->'Include library'->'Manage Libraries'
+ * Then search for the 'Adafruit GFX' and 'Adafruit SSD1306' libraries and install them
  * 
  * 
  * Pin connections (Arduino Uno/Nano):
