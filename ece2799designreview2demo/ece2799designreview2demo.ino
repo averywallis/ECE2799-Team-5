@@ -6,6 +6,8 @@
  * Shorted pot used to simulate thermistor
  * 
  * Wiring connections and circuit descriptions:
+ * Pin connection format: Circuit pins - Arduino
+ * 
  * 
  * Display:
  * VCC - 5V
