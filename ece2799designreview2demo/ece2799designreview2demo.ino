@@ -51,7 +51,7 @@
 #define THERMISTORNOMINAL 10000
 #define TEMPERATURENOMINAL 25
 #define NUMSAMPLES 10
-#define BCOEFFICIENT 3977
+#define BCOEFFICIENT 3950
 #define SERIESRESISTOR 10000
 #define IDEALTEMP 57.8
 
@@ -153,5 +153,5 @@ void loop() {
   display.display();
 
   //delay every half a second
-  delay(500);
+  delay(250);
 }
