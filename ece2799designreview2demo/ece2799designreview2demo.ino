@@ -103,14 +103,14 @@ void loop() {
      average += samples[i];
   }
   average /= NUMSAMPLES;
-  Serial.print("Average analog reading "); //print serially to computer
-  Serial.println(average); //send to computer
+//  Serial.print("Average analog reading "); //print serially to computer
+//  Serial.println(average); //send to computer
   
   // convert the value to resistance
   average = 1023 / average - 1;
   average = SERIESRESISTOR / average;
-  Serial.print("Thermistor resistance "); 
-  Serial.println(average);
+//  Serial.print("Thermistor resistance "); 
+//  Serial.println(average);
 
   //example temp reading code, using simplified Steinhart-hart equation
   float steinhart;
