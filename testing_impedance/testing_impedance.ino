@@ -30,7 +30,7 @@
 #define OLED_RESET 4
 #define REF 3.3
 #define NUMSAMPLES 10
-#define THERMISTORPIN A0
+#define THERMISTORPIN A7
 #define SERIESRESISTOR 10000
 
 Adafruit_SSD1306 display(OLED_RESET); //instance of display object
@@ -83,7 +83,7 @@ void loop() {
   display.print("Code: ");
   display.println(average);
   display.print("Voltage: ");
-  display.println(voltage);
+  display.println(voltage,3);
   display.print("Resistance: ");
   display.print(resistance);
   
