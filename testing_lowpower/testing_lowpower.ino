@@ -18,6 +18,7 @@ void setup()
       delay(100);
       digitalWrite(13, LOW);
     }
+    delay(1000);
 
 }
 
@@ -31,12 +32,13 @@ void loop()
       digitalWrite(13, LOW);
     }
     
+//    delay(8000); //delay 8 seconds (used for testing current draw comparisons against normal operations)
 
     // ATmega328P, ATmega168
 //    LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
 //                SPI_OFF, USART0_OFF, TWI_OFF);
 
-    // Enter power down state for 8 s with ADC and BOD module disabled
+//    // Enter power down state for 8 s with ADC and BOD module disabled
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);  
 
     
