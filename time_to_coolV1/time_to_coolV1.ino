@@ -142,7 +142,10 @@ void loop() {
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // convert to C
 
-  
+
+  //need verification that this is a correct way to do it
+  //using y = mx + b, where is y is a temp as a function of time, m = change in temp since last reading
+  //b = t(0), or initial reading. may want to use previous time
   new_time = millis(); //get new time
   m = (steinhart - last_temp) / (new_time - old_time); //calculate the new slope
   time_to_cool = (IDEALTEMP - T0) / m; //get the estimated time to cool
