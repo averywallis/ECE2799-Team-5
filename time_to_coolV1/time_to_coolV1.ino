@@ -54,6 +54,9 @@ Adafruit_SSD1306 display(OLED_RESET); //instance of display object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
 float T0 = 0;
+float last_temp = 0;
+long unsigned int new_time = 0;
+long unsigned int old_time = 0;
 
 
 void setup(){
@@ -73,6 +76,8 @@ void setup(){
   display.display(); //upadte the display
   delay(1000); //wait a second
   display.clearDisplay(); //clear the display
+
+  delay(10000); //wait 10 seconds to get T0 reading
 
   //get readings
   for (int i=0; i< NUMSAMPLES; i++){
@@ -96,13 +101,17 @@ void setup(){
   steinhart0 += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
   steinhart0 = 1.0 / steinhart0;                 // Invert
   steinhart0 -= 273.15;                         // convert to C
-  T0 = steinhart0;
+  T0 = steinhart0; //save original temp T(0)
+  last_temp = T0; //set this temp as the last_temp
+  old_time = millis(); //save the current time
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   uint8_t i;
   float average;
+  float m = 0;
+  float time_to_cool = 0;
 
    // take N samples in a row, with a slight delay
   for (i=0; i< NUMSAMPLES; i++){
@@ -133,11 +142,11 @@ void loop() {
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // convert to C
 
-
-  //print out temperatures, via serial and display
-  Serial.print("Temperature "); 
-  Serial.print(steinhart);
-  Serial.println(" *C");
+  
+  new_time = millis(); //get new time
+  m = (steinhart - last_temp) / (new_time - old_time); //calculate the new slope
+  time_to_cool = (IDEALTEMP - T0) / m; //get the estimated time to cool
+  old_time = new_time; //save the old time
 
   //display info on OLED
   display.clearDisplay();
@@ -151,6 +160,8 @@ void loop() {
   display.print(IDEALTEMP);
   display.print(" seconds");
   display.display();
+
+  
 
   //delay every half a second
   delay(250);
