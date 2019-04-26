@@ -53,6 +53,7 @@
 Adafruit_SSD1306 display(OLED_RESET); //instance of display object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
+float T0 = 0;
 
 
 void setup(){
@@ -72,7 +73,30 @@ void setup(){
   display.display(); //upadte the display
   delay(1000); //wait a second
   display.clearDisplay(); //clear the display
+
+  //get readings
+  for (int i=0; i< NUMSAMPLES; i++){
+   samples[i] = analogRead(THERMISTORPIN);
+   delay(10);
+  }
   
+  // average all the samples out
+  float average0 = 0;
+  for (int i = 0; i< NUMSAMPLES; i++) {
+     average0 += samples[i];
+  }
+  average0 /= NUMSAMPLES;
+  
+  average0 = 1023 / average0 - 1;   // convert the value to resistance
+  average0 = SERIESRESISTOR / average0; //get the resistance of the resistor
+  float steinhart0;
+  steinhart0 = average0 / THERMISTORNOMINAL;     // (R/Ro)
+  steinhart0 = log(steinhart0);                  // ln(R/Ro)
+  steinhart0 /= BCOEFFICIENT;                   // 1/B * ln(R/Ro)
+  steinhart0 += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
+  steinhart0 = 1.0 / steinhart0;                 // Invert
+  steinhart0 -= 273.15;                         // convert to C
+  T0 = steinhart0;
 }
 
 void loop() {
@@ -95,9 +119,8 @@ void loop() {
 //  Serial.print("Average analog reading "); //print serially to computer
 //  Serial.println(average); //send to computer
   
-  // convert the value to resistance
-  average = 1023 / average - 1;
-  average = SERIESRESISTOR / average;
+  average = 1023 / average - 1;   // convert the value to resistance
+  average = SERIESRESISTOR / average; //get the resistance of the resistor
 //  Serial.print("Thermistor resistance "); 
 //  Serial.println(average);
 
@@ -119,15 +142,14 @@ void loop() {
   //display info on OLED
   display.clearDisplay();
   display.setCursor(0,0);
-  display.print("ECE2799 Demo");
   display.setCursor(0,16);
   display.print("Temp: ");
   display.print(steinhart);
   display.print(" C");
   display.setCursor(0,32);
-  display.print("Ideal: ");
+  display.print("Time to cool: ");
   display.print(IDEALTEMP);
-  display.print(" C");
+  display.print(" seconds");
   display.display();
 
   //delay every half a second
