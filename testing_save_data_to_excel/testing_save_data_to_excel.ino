@@ -38,4 +38,10 @@ void loop() {
   b += 10;
   delay(100);
 
+  if(a > 11){
+    Serial.println("BEEP");
+    delay(1000);
+  }
+  
+
 }
