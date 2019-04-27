@@ -75,7 +75,7 @@ void setup(){
 
   //setup display
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //setup display with appropriate I2C address
-   display.clearDisplay(); //clear the display
+  display.clearDisplay(); //clear the display
   display.setTextSize(1); //set the text size
   display.setTextColor(WHITE); //set the text color to "white" (just turn pixel on in our case)
   display.setCursor(0,0); //set cursor in top left corner
