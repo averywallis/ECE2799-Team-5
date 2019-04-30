@@ -63,7 +63,7 @@ CRGB leds[NUM_LEDS]; //instance of LED object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
 
-int time_to_cool[100] = {0,0,0,0,0,0,0,0,0,0,
+int time_to_cool[] = {0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0,
@@ -189,8 +189,12 @@ void loop() {
   steinhart -= 273.15;                         // convert to C
   temp = steinhart;
 
-  temp = 59;
-  time1 = time_to_cool[0];
+//  temp = 59;
+//  time1 = time_to_cool[0];
+  time1 = 30 * (temp - 57) / 60;
+  if(time1 < 0){
+    time1 = 0;
+  }
 //  Serial.print(time_to_cool[0]);
 //  time1 = time_to_cool[temp];
 
