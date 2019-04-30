@@ -40,6 +40,7 @@
 #include <Adafruit_SSD1306.h> //display library
 #include <FastLED.h> //addressable LED library
 #include "LowPower.h"
+#include <Math.h>
 
 //macros used for display, LED, thermistor calculations
 #define OLED_RESET 4
@@ -62,7 +63,7 @@ CRGB leds[NUM_LEDS]; //instance of LED object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
 
-unsigned int time_to_cool[1000];
+int time_to_cool[100];
 
 
 void setup(){
@@ -87,7 +88,7 @@ void setup(){
   delay(1000); //wait a second
   display.clearDisplay(); //clear the display
 
-  for(char a = 0; a < 58; a++){
+  for(int a = 0; a < 58; a++){
     time_to_cool[a] = 0;
   }
   time_to_cool[58] = 51;
@@ -141,7 +142,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   uint8_t i;
   float average;
-  unsigned int temp = 0;
+  int temp = 0;
 
    // take N samples in a row, with a slight delay
   for (i=0; i< NUMSAMPLES; i++) {
@@ -172,7 +173,7 @@ void loop() {
   steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // convert to C
-  temp = floor(steinhart);
+  temp = steinhart;
   
   //set LED to appropriate color
   if(steinhart > IDEALTEMP + 10){ //if hotter than ideal + 10
@@ -194,15 +195,25 @@ void loop() {
   //display info on OLED
   display.clearDisplay();
   display.setCursor(0,0);
-  display.print("ECE2799 Demo");
-  display.setCursor(0,16);
+  display.println("ECE2799 Team 5");
+//  display.setCursor(0,16);
   display.print("Temp: ");
   display.print(steinhart);
-  display.print(" C");
-  display.setCursor(0,32);
+  display.println(" C");
+//  display.setCursor(0,32);
   display.print("Ideal: ");
   display.print(IDEALTEMP);
-  display.print(" C");
+  display.println(" C");
+//  display.setCursor(0,48);
+  display.println("Time till ideal: ");
+  temp = 59;
+  int time1 = 0;
+  Serial.print(time_to_cool[temp]);
+//  time1 = time_to_cool[temp];
+  display.print(time1);
+  display.print(" minutes");
+
+  
   display.display();
 
   //delay for 10 seconds
