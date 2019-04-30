@@ -201,7 +201,7 @@ void loop() {
 
   display.display(); //update the display
 
-  //delay for 8 seconds
+  //delay for 4 seconds
   LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);  
   display.clearDisplay(); //clear the display to prevent burn-in
   display.display(); //flush to the screen
