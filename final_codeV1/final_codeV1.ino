@@ -62,6 +62,8 @@ CRGB leds[NUM_LEDS]; //instance of LED object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
 
+unsigned int time_to_cool[1000];
+
 
 void setup(){
   // put your setup code here, to run once:
@@ -84,6 +86,54 @@ void setup(){
   display.display(); //upadte the display
   delay(1000); //wait a second
   display.clearDisplay(); //clear the display
+
+  for(char a = 0; a < 58; a++){
+    time_to_cool[a] = 0;
+  }
+  time_to_cool[58] = 51;
+  time_to_cool[59] = 110;
+  time_to_cool[60] = 153;
+  time_to_cool[61] = 198;
+  time_to_cool[62] = 238;
+  time_to_cool[63] = 282;
+  time_to_cool[64] = 318;
+  time_to_cool[65] = 357;
+  time_to_cool[66] = 386;
+  time_to_cool[67] = 426;
+  time_to_cool[68] = 461;
+  time_to_cool[69] = 489;
+  time_to_cool[70] = 518;
+  time_to_cool[71] = 552;
+  time_to_cool[72] = 580;
+  time_to_cool[73] = 610;
+  time_to_cool[74] = 638;
+  time_to_cool[75] = 663;
+  time_to_cool[76] = 692;
+  time_to_cool[77] = 713;
+  time_to_cool[78] = 741;
+  time_to_cool[79] = 772;
+  time_to_cool[80] = 801;
+  time_to_cool[81] = 831;
+  time_to_cool[82] = 848;
+  time_to_cool[83] = 872;
+  time_to_cool[84] = 895;
+  time_to_cool[85] = 919;
+  time_to_cool[86] = 945;
+  time_to_cool[87] = 970;
+  time_to_cool[88] = 1000;
+  time_to_cool[89] = 1028;
+  time_to_cool[90] = 1048;
+  time_to_cool[91] = 1070;
+  time_to_cool[92] = 1092;
+  time_to_cool[93] = 1120;
+  time_to_cool[94] = 1142;
+  time_to_cool[95] = 1166;
+  time_to_cool[96] = 1192;
+  time_to_cool[97] = 1220;
+  time_to_cool[98] = 1246;
+  time_to_cool[99] = 1271;
+  time_to_cool[100] = 1294;
+  
   
 }
 
@@ -91,6 +141,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   uint8_t i;
   float average;
+  unsigned int temp = 0;
 
    // take N samples in a row, with a slight delay
   for (i=0; i< NUMSAMPLES; i++) {
@@ -121,7 +172,8 @@ void loop() {
   steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // convert to C
-
+  temp = floor(steinhart);
+  
   //set LED to appropriate color
   if(steinhart > IDEALTEMP + 10){ //if hotter than ideal + 10
     leds[0] = CRGB(255, 0, 0); //set to red
