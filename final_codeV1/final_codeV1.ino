@@ -63,7 +63,16 @@ CRGB leds[NUM_LEDS]; //instance of LED object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
 
-int time_to_cool[100];
+int time_to_cool[100] = {0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0,
+                         0,0,0,0,0,0,0,0,0,0};
 
 int x = 0;
 
@@ -135,7 +144,7 @@ void setup(){
   time_to_cool[98] = 1246;
   time_to_cool[99] = 1271;
   time_to_cool[100] = 1294;
-//  Serial.print(time_to_cool[0]);
+//  Serial.print(time_to_cool[86]);
   
 }
 
@@ -144,6 +153,10 @@ void loop() {
   uint8_t i;
   float average;
   int temp = 0;
+  float steinhart;
+  int time1 = 0;
+
+
 
 
    // take N samples in a row, with a slight delay
@@ -168,7 +181,6 @@ void loop() {
 //  Serial.println(average);
 
   //example temp reading code, using simplified Steinhart-hart equation
-  float steinhart;
   steinhart = average / THERMISTORNOMINAL;     // (R/Ro)
   steinhart = log(steinhart);                  // ln(R/Ro)
   steinhart /= BCOEFFICIENT;                   // 1/B * ln(R/Ro)
@@ -176,7 +188,13 @@ void loop() {
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // convert to C
   temp = steinhart;
-  
+
+  temp = 59;
+  time1 = time_to_cool[0];
+//  Serial.print(time_to_cool[0]);
+//  time1 = time_to_cool[temp];
+
+
   //set LED to appropriate color
   if(steinhart > IDEALTEMP + 10){ //if hotter than ideal + 10
     leds[0] = CRGB(255, 0, 0); //set to red
@@ -208,11 +226,7 @@ void loop() {
   display.println(" C");
 //  display.setCursor(0,48);
   display.println("Time till ideal: ");
-  temp = 59;
-  int time1 = 0;
-  time1 = time_to_cool[0];
-//  Serial.print(time_to_cool[0]);
-//  time1 = time_to_cool[temp];
+
   display.print(time1);
   display.print(" minutes");
 
