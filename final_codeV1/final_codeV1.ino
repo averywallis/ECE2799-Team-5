@@ -1,46 +1,8 @@
-/*
- * Code used for design review #2 demonstration
- * 
- * Reads thermistor circuit output and display corresponding temperature
- * 
- * Shorted pot used to simulate thermistor
- * 
- * Wiring connections and circuit descriptions:
- * Pin connection format: Circuit pins - Arduino
- * 
- * 
- * Display:
- * VCC - 5V
- * GND - GND
- * SCL - A5
- * SDA - A4
- * 
- * 
- * LED:
- * 220 resistor between data in pin and Arduino pin
- * VCC - 5v
- * GND - GND
- * Din - D5
- * 
- * 'Thermistor' circuit:
- * Acts as voltage divider circuit
- * R1 = 10kOhms
- * R2 = 'Thermistor' (really 10k shorted potentiometer to act as variable resistor)
- * 
- * VCC - 3.3V
- * GND - GND
- * Vout - A0
- * 
- * 
- * 
- */
-
-//appropriate libraries
+//include appropriate libraries
 #include <Adafruit_GFX.h> //display library
 #include <Adafruit_SSD1306.h> //display library
 #include <FastLED.h> //addressable LED library
-#include "LowPower.h"
-#include <Math.h>
+#include "LowPower.h" //low power library
 
 //macros used for display, LED, thermistor calculations
 #define OLED_RESET 4
@@ -63,6 +25,7 @@ CRGB leds[NUM_LEDS]; //instance of LED object
 
 uint16_t samples[NUMSAMPLES]; //array of samples
 
+//array of time to cool numbers 
 int time_to_cool[] = {0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0,
@@ -74,12 +37,11 @@ int time_to_cool[] = {0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0,
                          0,0,0,0,0,0,0,0,0,0};
 
-int x = 0;
 
 void setup(){
   // put your setup code here, to run once:
   delay(1000); //boot up safely (not entirely required, but here because why not)
-  Serial.begin(9600); //setup communications between Arduino and computer
+  Serial.begin(9600); //setup serial communications between Arduino and computer
   analogReference(EXTERNAL); //setup reference for ADC as external (3.3V in this case)
 
   //setup LED
@@ -88,7 +50,7 @@ void setup(){
   FastLED.show(); //update the LEDs
 
   //setup display
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //setup display with appropriate I2C address
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //setup display with appropriate I2C address (0x3C in our case)
   display.clearDisplay(); //clear the display
   display.setTextSize(1); //set the text size
   display.setTextColor(WHITE); //set the text color to "white" (just turn pixel on in our case)
@@ -98,9 +60,10 @@ void setup(){
   delay(1000); //wait a second
   display.clearDisplay(); //clear the display
 
-  for(int a = 0; a < 58; a++){
-    time_to_cool[a] = 0;
+  for(int a = 0; a < 58; a++){ //for each of the first 57 entries in the array
+    time_to_cool[a] = 0; //set them equal to 0
   }
+  //set the rest to appropriate values
   time_to_cool[58] = 51;
   time_to_cool[59] = 110;
   time_to_cool[60] = 153;
@@ -144,12 +107,13 @@ void setup(){
   time_to_cool[98] = 1246;
   time_to_cool[99] = 1271;
   time_to_cool[100] = 1294;
-//  Serial.print(time_to_cool[86]);
+//  Serial.print(time_to_cool[86]); //debugging that values actually worked
   
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  //values used later in the code
   uint8_t i;
   float average;
   int temp = 0;
@@ -159,18 +123,19 @@ void loop() {
 
 
 
-   // take N samples in a row, with a slight delay
-  for (i=0; i< NUMSAMPLES; i++) {
-   samples[i] = analogRead(THERMISTORPIN);
-   delay(10);
+  for (i = 0; i < NUMSAMPLES; i++){ //for the number of samples
+   samples[i] = analogRead(THERMISTORPIN); //get a reading from the thermistor and store it in the array
+   delay(10); //slight delay for stability
   }
 
   // average all the samples out
-  average = 0;
-  for (i = 0; i< NUMSAMPLES; i++) {
-     average += samples[i];
+  average = 0; //set average to 0
+  for (i = 0; i< NUMSAMPLES; i++){ //for each of the samples
+     average += samples[i]; //add that to the average
   }
-  average /= NUMSAMPLES;
+  average /= NUMSAMPLES; //calculate the average
+
+  //for debugging
 //  Serial.print("Average analog reading "); //print serially to computer
 //  Serial.println(average); //send to computer
   
@@ -178,25 +143,23 @@ void loop() {
   average = 1023 / average - 1;
   average = SERIESRESISTOR / average;
 //  Serial.print("Thermistor resistance "); 
-//  Serial.println(average);
+//  Serial.println(average); //for debugging
 
-  //example temp reading code, using simplified Steinhart-hart equation
+  //Calculate the temperature from the calculated resistance
+  //using simplified Steinhart-hart equation:
+  // 1/T = 1/T0 + 1/B * ln(R/Ro)
   steinhart = average / THERMISTORNOMINAL;     // (R/Ro)
   steinhart = log(steinhart);                  // ln(R/Ro)
   steinhart /= BCOEFFICIENT;                   // 1/B * ln(R/Ro)
   steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
-  steinhart = 1.0 / steinhart;                 // Invert
-  steinhart -= 273.15;                         // convert to C
+  steinhart = 1.0 / steinhart;                 // Invert to get temp in Kelvin
+  steinhart -= 273.15;                         // convert to Celsius
   temp = steinhart;
 
-//  temp = 59;
-//  time1 = time_to_cool[0];
-  time1 = 30 * (temp - 57) / 60;
-  if(time1 < 0){
-    time1 = 0;
-  }
-//  Serial.print(time_to_cool[0]);
-//  time1 = time_to_cool[temp];
+//  time1 = time_to_cool[0]; //attempting to use lookup table, but for whatever reason won't execute properly
+// potentially variable outside scope, but that should throw a compiler error, which this doesn't
+  time1 = 30 * (temp - 57) / 60; //use a simpliefied equation to calculate the time till the drink is at ideal
+
 
 
   //set LED to appropriate color
@@ -209,7 +172,7 @@ void loop() {
   else if(steinhart < IDEALTEMP - 10){ //if colder than ideal - 10
     leds[0] = CRGB(0, 0, 255); //set to blue
   }
-  FastLED.show();
+  FastLED.show(); //update the LED
 
   //print out temperatures, via serial and display
   Serial.print("Temperature "); 
@@ -220,22 +183,24 @@ void loop() {
   display.clearDisplay();
   display.setCursor(0,0);
   display.println("ECE2799 Team 5");
-//  display.setCursor(0,16);
   display.print("Temp: ");
   display.print(steinhart);
   display.println(" C");
-//  display.setCursor(0,32);
   display.print("Ideal: ");
   display.print(IDEALTEMP);
   display.println(" C");
-//  display.setCursor(0,48);
   display.println("Time till ideal: ");
 
-  display.print(time1);
-  display.print(" minutes");
+  if(time1 > -1){ //if we got a positive number (ie still time to cool)
+    display.print(time1);
+    display.print(" minutes");
+  }
+  else{ //else we've passed the ideal temperature
+    display.print("passed ideal");
+  }
 
   
-  display.display();
+  display.display(); //update the display
 
   //delay for 8 seconds
   LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);  
