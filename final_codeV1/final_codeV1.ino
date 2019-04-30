@@ -65,6 +65,7 @@ uint16_t samples[NUMSAMPLES]; //array of samples
 
 int time_to_cool[100];
 
+int x = 0;
 
 void setup(){
   // put your setup code here, to run once:
@@ -134,7 +135,7 @@ void setup(){
   time_to_cool[98] = 1246;
   time_to_cool[99] = 1271;
   time_to_cool[100] = 1294;
-  
+//  Serial.print(time_to_cool[0]);
   
 }
 
@@ -143,6 +144,7 @@ void loop() {
   uint8_t i;
   float average;
   int temp = 0;
+
 
    // take N samples in a row, with a slight delay
   for (i=0; i< NUMSAMPLES; i++) {
@@ -208,7 +210,8 @@ void loop() {
   display.println("Time till ideal: ");
   temp = 59;
   int time1 = 0;
-  Serial.print(time_to_cool[temp]);
+  time1 = time_to_cool[0];
+//  Serial.print(time_to_cool[0]);
 //  time1 = time_to_cool[temp];
   display.print(time1);
   display.print(" minutes");
@@ -216,7 +219,7 @@ void loop() {
   
   display.display();
 
-  //delay for 10 seconds
+  //delay for 8 seconds
   LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);  
   
 }
